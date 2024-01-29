@@ -1,3 +1,46 @@
+function operatorSelect(symbol) {
+    if (operator == '') {
+        operand1 = parseFloat(displayValue);
+        operator = symbol;
+        displayValue = '0';
+        display.innerHTML = displayValue;
+        toggleOperatorSelected();
+    }
+}
+
+function equate() {
+    if (operator != '') {
+        operand2 = parseFloat(displayValue);
+        displayValue = '' + operate(operand1, operator, operand2);
+        while (displayValue.length > 9) displayValue = displayValue.slice(0, -1);
+        display.innerHTML = displayValue;
+        toggleOperatorSelected();
+        operand1 = '0';
+        operator = '';
+        operand2 = '0';
+    }
+}
+
+function toggleOperatorSelected() {
+    switch (operator) {
+        case ('+'):
+            plus.classList.toggle('selected');
+            break;
+        case ('-'):
+            minus.classList.toggle('selected');
+            break;
+        case ('*'):
+            star.classList.toggle('selected');
+            break;
+        case ('/'):
+            slash.classList.toggle('selected');
+            break;
+        default:
+            // this case should never be reached
+            break;
+    }
+}
+
 function operate(operand1, operator, operand2) {
     switch (operator) {
         case ('+'):
@@ -31,9 +74,9 @@ function divide(operand1, operand2) {
     return parseFloat((operand1 / operand2).toFixed(7));
 }
 
-
 function updateDisplay(value) {
     if (value == '') return clearDisplay();
+    if (displayValue == 'NaN') return;
     if (value == '-') return changeSign();
     if (value == '%') return toPercent();
 
@@ -54,6 +97,13 @@ function updateDisplay(value) {
 function clearDisplay() {
     displayValue = '0';
     display.innerHTML = displayValue;
+    operand1 = '0';
+    operator = '';
+    operand2 = '0';
+    if (plus.classList.contains('selected')) plus.classList.remove('selected');
+    if (minus.classList.contains('selected')) minus.classList.remove('selected');
+    if (star.classList.contains('selected')) star.classList.remove('selected');
+    if (slash.classList.contains('selected')) slash.classList.remove('selected');
 }
 
 function changeSign() {
@@ -76,6 +126,9 @@ function toPercent() {
 }
 
 let displayValue = '0';
+let operand1 = '0';
+let operator = '';
+let operand2 = '0';
 
 const display = document.querySelector('#display');
 const clear = document.querySelector('#clear');
@@ -92,6 +145,11 @@ const nine = document.querySelector('#nine');
 const decimal = document.querySelector('#decimal');
 const sign = document.querySelector('#sign');
 const percent = document.querySelector('#percent');
+const plus = document.querySelector('#add');
+const minus = document.querySelector('#subtract');
+const star = document.querySelector('#multiply');
+const slash = document.querySelector('#divide');
+const equals = document.querySelector('#equals');
 
 clear.addEventListener('click', () => updateDisplay(''));
 zero.addEventListener('click', () => updateDisplay('0'));
@@ -107,3 +165,8 @@ nine.addEventListener('click', () => updateDisplay('9'));
 decimal.addEventListener('click', () => updateDisplay('.'));
 sign.addEventListener('click', () => updateDisplay('-'));
 percent.addEventListener('click', () => updateDisplay('%'));
+plus.addEventListener('click', () => operatorSelect('+'));
+minus.addEventListener('click', () => operatorSelect('-'));
+star.addEventListener('click', () => operatorSelect('*'));
+slash.addEventListener('click', () => operatorSelect('/'));
+equals.addEventListener('click', () => equate());
